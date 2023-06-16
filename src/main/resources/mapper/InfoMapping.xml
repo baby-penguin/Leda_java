@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.htanswer.dao.InfoDao">
+
+    <select id="getFellowQuestion5" resultType="com.demo.htanswer.bean.question">
+        select follow.QID,Q_xh,Q_title,Q_content,Q_time,Q_tag,Reward_points,Q_state,Q_content_html,Q_editTime,Q_summary
+        from leda.question,leda.follow
+        where follow.xh=#{xh} and follow.QID=question.QID and Q_state=0
+        order by follow_time desc limit 5;
+    </select>
+
+    <select id="getQuestionsByXh" resultType="java.util.Map">
+        select QID,Q_xh,Q_title,Q_content,Q_time,Q_tag,Reward_points,Q_state,Q_content_html,Q_editTime,Q_summary,nickname,profile_photo
+        from question
+                 join user on question.q_xh=user.xh
+        where Q_state=0 and user.xh=#{xh}
+        order by Reward_points desc,Q_time desc,Q_editTime desc
+    </select>
+
+    <select id="getQuestionAndCommentByXh" resultType="com.demo.htanswer.bean.question">
+        select question.QID,Q_xh,Q_title,Q_content,Q_time,Q_tag,Reward_points,Q_state,Q_content_html,Q_editTime,Q_summary
+        from leda.question,leda.comment
+        where comment.xh=#{xh} and comment.C_state=2 and comment.QID=question.QID and Q_state=0
+        order by comment_time desc limit 5;
+    </select>
+
+    <select id="getSearchImage" resultType="com.demo.htanswer.bean.search">
+        select search
+        from leda.search_history
+        where search like #{search}
+        order by searchnum desc,search_time desc limit 5;
+    </select>
+
+    <select id="getHotestSearch" resultType="com.demo.htanswer.bean.search">
+        select *
+        from leda.search_history
+        where DATE_SUB(CURDATE(), INTERVAL 7 DAY) &lt;= date(search_time)
+        order by searchnum desc limit 5;
+    </select>
+
+    <update id="SearchNumPlus">
+        update leda.search_history set searchnum=searchnum+1
+        where id=#{id};
+    </update>
+
+    <insert id="InserSearchContent">
+        insert into leda.search_history(search, search_time) values (#{search},NOW());
+    </insert>
+
+    <select id="getQuestionBySearch" resultType="java.util.Map">
+        select QID,Q_xh,Q_title,Q_content,Q_time,Q_tag,Reward_points,Q_state,Q_content_html,Q_editTime,Q_summary,nickname,profile_photo
+        from leda.question join leda.user on question.q_xh=user.xh
+        where Q_content like #{search} or Q_title like #{search} and Q_state=0;
+    </select>
+
+    <select id="getQueationBySearchComment" resultType="com.demo.htanswer.bean.question">
+        select question.QID,Q_xh,Q_title,Q_content,Q_time,Q_tag,Reward_points,Q_state,Q_content_html,Q_editTime,Q_summary
+        from leda.question,leda.comment
+        where comment_content like #{search} and comment.QID=question.QID and Q_state=0
+        order by Q_time desc;
+    </select>
+
+    <select id="getFileBySearch" resultType="com.demo.htanswer.bean.File">
+        select *
+        from leda.file where file_name like #{search};
+    </select>
+
+    <select id="ifHasSearch" resultType="com.demo.htanswer.bean.search">
+        select * from leda.search_history where search=#{search};
+    </select>
+
+    <select id="getYesterdayRead" resultType="java.lang.Integer">
+        select count(*)
+        from leda.browse_questions
+        where xh=#{xh} and date_add(browse_time, interval -1 day);
+    </select>
+
+    <select id="getYesterdayAnswer" resultType="java.lang.Integer">
+        select count(*)
+        from leda.comment
+        where xh=#{xh} and date_add(comment_time, interval -1 day);
+    </select>
+
+    <select id="getFollowNum" resultType="java.lang.Integer">
+        select count(*)
+        from leda.follow
+        where xh=#{xh};
+    </select>
+
+    <insert id="insertAccuseInfo">
+        insert into leda.accuse(accusexh, accusedxh, meg,time,img) VALUE(#{accusexh},#{accusedxh},#{meg},NOW(),#{newName});
+    </insert>
+</mapper>

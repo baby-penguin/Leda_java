@@ -1,0 +1,17 @@
+
+# mysql
+spring:
+  datasource:
+    #MySQL配置
+    driverClassName:  com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://49.235.67.191:3306/leda?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+#    url: jdbc:mysql://49.235.67.191:3306/leda?useUnicode=true&characterEncoding=UTF8
+    url: jdbc:mysql://localhost:3306/leda?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    username: root
+    password: Aptx4869gtt
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.example.demo.model
+server:
+  port: 9000

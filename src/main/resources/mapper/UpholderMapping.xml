@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.htanswer.dao.UpholdDao">
+
+    <update id="editUserProfile_photo">
+        update user set profile_photo=#{profile_photo} where xh=#{xh};
+    </update>
+
+    <select id="requestUser" resultType="com.demo.htanswer.bean.User">
+        select * from user where xh=#{xh};
+    </select>
+
+    <update id="editUserInfo">
+        update user set nickname=#{nickname},password=#{password}
+        where xh=#{xh};
+    </update>
+
+    <insert id="upholdFiles">
+        insert into file (xh,file_name,file_src,time) value (#{xh},#{file_name},#{file_src},#{time});
+    </insert>
+
+    <select id="getFileList" resultType="com.demo.htanswer.bean.File">
+        select * from file where xh=#{xh} order by time desc;
+    </select>
+
+    <update id="addLoadNum">
+        update file set upload=upload+1 where id=#{id};
+    </update>
+
+    <select id="getTop10File" resultType="com.demo.htanswer.bean.File">
+        select id,file.xh as xh,file_name,file_src,time,upload,nickname
+        from leda.file,leda.user
+        where file.xh=user.xh and file.state=1
+        order by upload desc limit 10;
+    </select>
+
+</mapper>

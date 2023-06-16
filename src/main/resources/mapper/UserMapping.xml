@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.htanswer.dao.UserDao">
+    <select id="getUserByMassage" resultType="com.demo.htanswer.bean.User">
+        SELECT*  FROM user WHERE xh=#{xh} AND password=#{password};
+    </select>
+    <select id="getNickname" resultType="java.lang.String">
+        select nickname
+        from user
+        where xh=#{xh};
+    </select>
+    <select id="getProfilePhoto" resultType="java.lang.String">
+        select profile_photo from user where xh=#{xh};
+    </select>
+
+    <update id="recordLoginTime">
+        update user set lastime=#{lastime} where xh=#{xh};
+    </update>
+
+    <select id="isTodayFirstLogin" resultType="java.lang.Integer">
+        select count(*) from user where to_days(lastime) != to_days(now()) and xh=#{xh};
+    </select>
+
+    <update id="coresAdd">
+        update user set bit=bit+#{cores}
+        where xh=#{xh};
+    </update>
+
+    <select id="getUserByXh" resultType="com.demo.htanswer.bean.User">
+        select xh,nickname,gender,profession,bit,profile_photo from user
+        where xh=#{xh} and U_state=1
+    </select>
+    <select id="getUserGender" resultType="java.lang.String">
+        select gender from user
+        where xh=#{xh}
+    </select>
+    <select id="getUserBit" resultType="java.lang.Integer">
+        select a.bit from user as a
+        where xh=#{xh}
+    </select>
+    <select id="getUserProfession" resultType="java.lang.String">
+        select profession from user
+        where xh=#{xh}
+    </select>
+
+    <insert id="addUser" >
+        INSERT INTO `user` (xh,nickname,password,gender,profession,bit)
+        VALUES  (#{xh},#{nickname},#{password},#{gender},#{profession},50)
+    </insert>
+    <select id="judgeUser" resultType="java.lang.Integer">
+        SELECT count(*) FROM user WHERE xh=#{xh}
+    </select>
+
+
+</mapper>

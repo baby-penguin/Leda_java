@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.demo.htanswer.dao.User.QuestionDao">
+    <select id="getQtag" resultType="com.demo.htanswer.bean.Tag">
+        select * from tag
+        where tid in (select tid from question_tags where qid=#{QID})
+    </select>
+    <select id="getQuestion" resultType="com.demo.htanswer.bean.question">
+        select * from question
+        where qid=#{qid};
+    </select>
+    <insert id="followQuestion">
+        insert into follow (QID, xh, follow_time, f_state)
+        values (#{QID},#{xh},current_time ,0);
+    </insert>
+    <insert id="browseQuestion">
+        insert into browse_questions (QID, xh, browse_time)
+        values (#{QID},#{xh},current_time );
+    </insert>
+    <select id="getBrowseNum" resultType="java.lang.Integer">
+        select count(*) from browse_questions
+        where QID=#{QID}
+    </select>
+    <select id="getFollowState" resultType="java.lang.Integer">
+        select count(*) from follow
+        where QID=#{QID} and xh=#{xh}
+    </select>
+    <delete id="cancelFollow" >
+        delete
+        from follow
+        where QID=#{QID} and xh=#{xh};
+    </delete>
+    <select id="getCommentNum" resultType="java.lang.Integer">
+        select  count(*) from comment
+        where QID=#{QID};
+    </select>
+    <select id="getFollowNum" resultType="java.lang.Integer">
+        select  count(*) from follow
+        where QID=#{QID};
+    </select>
+    <insert id="Comment">
+        insert into comment (QID,xh,comment_time,comment_content,comment_summary,comment_content_html,C_state)
+        values(#{QID},#{xh},current_time ,#{comment_content},#{comment_summary},#{comment_content_html},#{c_state})
+    </insert>
+    <select id="getAllComment" resultType="com.demo.htanswer.bean.comment">
+        select c.CID,c.QID,c.xh,c.comment_time,c.comment_content,c.comment_summary,c.comment_content_html,c.C_state,u.nickname,u.profile_photo from comment as c
+        join user  as u on c.xh=u.xh
+        where c.C_state=0 and c.QID=#{qid}
+        order by c.comment_time desc
+    </select>
+    <insert id="dislikeQuestion">
+        insert into dislike_Question(QID,xh,dislike_time,State)
+        values(#{QID},#{xh},current_time ,0)
+    </insert>
+    <insert id="likeComment">
+        insert into like_Comment(CID,xh,like_Comment_time,state)
+        values(#{CID},#{xh},current_time,0)
+    </insert>
+    <delete id="cancelLikeComment">
+        delete
+        from like_Comment
+        where CID=#{CID} and xh=#{xh};
+    </delete>
+    <select id="likeCommentNum" resultType="java.lang.Integer">
+        select count(*) from like_Comment
+        where CID=#{CID}
+    </select>
+    <select id="getLikeCommentState" resultType="java.lang.Integer">
+        select count(*) from like_Comment
+        where CID=#{CID} and xh=#{xh}
+    </select>
+
+    <select id="getMyquestions" resultType="com.demo.htanswer.bean.question">
+        select * from question
+        where Q_xh=#{xh} and Q_state=0
+        order by q_time desc ;
+    </select>
+    <select id="getQuestion_t_time" resultType="com.demo.htanswer.bean.question">
+        select q.q_title,q.q_time from question as q
+        where q.QID=#{QID}
+    </select>
+    <select id="getMyAnswer" resultType="com.demo.htanswer.bean.comment">
+        select * from comment
+        where xh=#{xh} and C_state=0
+        order by comment_time desc;
+    </select>
+    <select id="getQuestionTitle" resultType="java.lang.String">
+        select Q_title from question
+        where QID=#{QID}
+    </select>
+    <select id="getQuestionToday" resultType="com.demo.htanswer.bean.question">
+        select * from question
+        where to_days(Q_time)=to_days(now())
+        order by Q_time desc;
+    </select>
+    <select id="getQuestionSevenDay" resultType="com.demo.htanswer.bean.question">
+        select * from question
+        where date_sub(curdate(),interval  7 day)&lt;=date(Q_time)
+        order by Q_time desc;
+    </select>
+    <insert id="browseTags">
+        insert into browse_tags(TID,xh,browse_time)
+        values (#{TID},#{xh},current_time)
+
+    </insert>
+    <select id="getQuestionByCID" resultType="java.lang.Integer">
+        select QID from comment
+        where CID=#{CID}
+    </select>
+    <update id="cancelBrowseTags">
+        update browse_tags
+        set state=1 where TID=#{TID} and xh=#{xh}
+        order by browse_time desc limit 1
+    </update>
+    <select id="getRecentlyTags" resultType="com.demo.htanswer.bean.Tag">
+        select a.TID,b.tag_name,count(*) as browse_count from browse_tags as a
+        join tag as b on a.TID = b.TID
+        where date_sub(curdate(),interval 7 day) &lt;=date(a.browse_time) and a.xh=#{xh} and a.state=0
+        group by a.TID
+        order by count(*) desc
+    </select>
+    <select id="getBrowseTagCount" resultType="java.lang.Integer">
+        select count(*) from browse_tags
+        where TID=#{tid} and xh=#{xh} and state=0 and date_sub(curdate(),interval 7 day) &lt;=date(browse_time)
+    </select>
+    <select id="getNewQuestions" resultType="com.demo.htanswer.bean.question">
+        select * from question
+        where date_sub(curdate(),interval 7 day) &lt;=date(Q_time)
+        order by Q_time desc
+    </select>
+    <select id="getBestComment" resultType="com.demo.htanswer.bean.comment">
+        select * from comment
+        where QID=#{QID} and C_state=2
+    </select>
+    <update id="Q_likeComment">
+        update comment
+        set C_state=2 where CID=#{CID}
+    </update>
+    <update id="UpdateBit">
+        update user
+        set bit=bit+#{bitAdd}
+        where xh=#{xh}
+    </update>
+
+</mapper>

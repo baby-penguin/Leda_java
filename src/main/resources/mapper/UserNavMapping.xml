@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.htanswer.dao.User.NavDao">
+    <insert id="postQuestion"  parameterType="com.demo.htanswer.bean.question" useGeneratedKeys="true" keyProperty="QID">
+        INSERT INTO `question` ( Q_xh, Q_title, Q_content, Q_time, Q_tag, Reward_points, Q_state,Q_content_html,Q_editTime,Q_summary)
+        VALUES ( #{Q_xh}, #{Q_title}, #{Q_content}, current_time , #{Q_tag}, #{Reward_points},#{Q_state},#{Q_content_html},current_time,#{Q_summary});
+    </insert>
+    <update id="coresReduce">
+        update user set bit=bit-#{num}
+        where xh=#{xh};
+    </update>
+
+    <select id="getAllTag" resultType="com.demo.htanswer.bean.Tag">
+        SELECT *FROM tag
+        WHERE T_state=0
+    </select>
+    <select id="getPartofTag" resultType="com.demo.htanswer.bean.Tag">
+        select * from tag
+        where tag_name like concat(concat('%',#{tag_name}),'%') and T_state=0
+    </select>
+    <select id="getTagname" resultType="java.lang.String">
+        select tag_name from tag
+        where TID=#{TID} and T_state=0
+    </select>
+
+<!--    <select id="getUserByMassage" resultType="java.lang.Integer">-->
+<!--        SELECT count(*) FROM user WHERE xh=#{xh} AND password=#{password}-->
+<!--    </select>-->
+<!--    -->
+<!--    <select id="getProfilePhoto" resultType="java.lang.String">-->
+<!--        select profile_photo from user where xh=#{xh};-->
+<!--    </select>-->
+
+    <insert id="insertQ_T">
+        INSERT INTO `question_tags` (QID,TID)
+        VALUES ( #{QID},#{TID});
+    </insert>
+</mapper>

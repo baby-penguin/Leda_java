@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.htanswer.dao.User.indexFollowDao">
+    <select id="getAllFollow" resultType="com.demo.htanswer.bean.follow">
+        select * from follow
+        where xh=#{xh}
+        order by follow_time desc;
+    </select>
+    <select id="getFollowQuestion" resultType="com.demo.htanswer.bean.question">
+        select *  from question as q
+        join follow as f on f.QID=q.QID
+        where f.xh=#{xh} and q.Q_state=0
+    </select>
+
+</mapper>

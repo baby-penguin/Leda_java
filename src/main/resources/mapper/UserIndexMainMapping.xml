@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.demo.htanswer.dao.User.indexMainDao">
+    <select id="getAllQuestion" resultType="com.demo.htanswer.bean.question">
+        select QID,Q_xh,Q_title,Q_content,Q_time,Q_tag,Reward_points,Q_state,Q_content_html,Q_editTime,Q_summary,nickname,profile_photo
+        from question
+        join user on question.q_xh=user.xh
+        where Q_state=0
+        order by Reward_points desc,Q_time desc,Q_editTime desc
+    </select>
+</mapper>

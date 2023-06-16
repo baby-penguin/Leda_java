@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.htanswer.dao.LetterDao">
+
+    <select id="getLetters" resultType="java.util.Map">
+        select fromxh, toxh, content,DATE_FORMAT(time,'%y-%m-%d %h-%m-%s') as time,letter.state,nickname,profile_photo
+        from letter join user on xh=fromxh
+        where toxh=#{xh};
+    </select>
+    <select id="getInforms" resultType="java.util.Map">
+        select CID,comment.xh,nickname,comment_time,comment_content,comment_summary,Q_title,question.QID,C_state
+        from user
+                 join comment on user.xh=comment.xh
+                 join question on question.QID=comment.QID
+        where C_state=false and question.Q_xh=#{xh};
+    </select>
+    <select id="getRelatives" resultType="java.util.Map">
+        select fromxh, toxh, content, DATE_FORMAT(time, '%y-%m-%d') as time,sum(!letter.state) num,nickname,profile_photo
+        from letter join user
+        on xh=fromxh
+        where toxh=#{xh}
+        group by fromxh;
+    </select>
+    <select id="getMessages" resultType="java.util.Map">
+        select fromxh,toxh,content,DATE_FORMAT(time,'%y-%m-%d %h-%m-%s') as time
+        from letter
+        where (fromxh = #{xh1} and toxh = #{xh2})
+           or (fromxh = #{xh2} and toxh = #{xh1});
+    </select>
+    <insert id="addLetter">
+        insert into letter(fromxh,toxh,content) value(#{fromxh},#{toxh},#{content});
+    </insert>
+    <update id="readMessages">
+        update letter set state=true where fromxh=#{xh2} and toxh=#{xh1};
+    </update>
+</mapper>

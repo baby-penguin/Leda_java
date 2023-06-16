@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.htanswer.dao.AdminDao">
+
+    <!--    管理员-->
+    <!--    登录-->
+    <select id="adminLogin" resultType="int">
+        select count(*) from admins where admin_id=#{id} and admin_password=#{password};
+    </select>
+    <select id="findUser" resultType="com.demo.htanswer.bean.User">
+        select *
+        from user
+        where xh like #{info} or nickname like #{info};
+    </select>
+    <select id="accuseNum" resultType="int">
+        select count(*) from accuse where state=false;
+    </select>
+    <select id="fileNum" resultType="int">
+        select count(*) from file where state=false;
+    </select>
+    <select id="findAccuse" resultType="com.demo.htanswer.bean.Accuse">
+        select * from accuse where state=false;
+    </select>
+    <select id="findFile" resultType="com.demo.htanswer.bean.File">
+        select * from file where state=false;
+    </select>
+    <select id="allFile" resultType="com.demo.htanswer.bean.File">
+        select * from file where state=true;
+    </select>
+    <update id="iceUser">
+        update user set U_state=false where xh=#{xh};
+    </update>
+    <update id="addBit">
+        update user set bit=bit+#{bit} where xh=#{xh};
+    </update>
+    <select id="findBit" resultType="int">
+        select bit from user where xh=#{xh};
+    </select>
+    <update id="delAccuse">
+        update accuse set state=true where accusexh=#{accusexh} and time=#{time};
+    </update>
+    <insert id="addInform">
+        insert into letter(fromxh,toxh,content) value(111,#{xh},#{meg});
+    </insert>
+    <update id="admitFile">
+        update file set state=true where file_name=#{file_name};
+    </update>
+    <delete id="rejectFile">
+        delete from file where file_name=#{file_name};
+    </delete>
+
+</mapper>
